@@ -22,7 +22,7 @@ import pylab as plt
 #from prednet import PredNet
 from mnist_pred_rgcLSTM import Pred_rgcLSTM
 from data_utils import SequenceGenerator
-from settings import *
+from settings_MNIST import *
 import time #to evaluate the process of training process
 start_time = time.time()
 
@@ -31,16 +31,16 @@ weights_file = os.path.join(WEIGHTS_DIR, 'pred_rgcLSTM_mnist_weights.hdf5')  # w
 json_file = os.path.join(WEIGHTS_DIR, 'pred_rgcLSTM_mnist_model.json')
 
 # Data files
-train_file = os.path.join(DATA_DIR, 'mnist_data1.hkl')#'my_train_mnist_data1.hkl')#'6000_mnist_data1.hkl')#'mnist_data1.hkl')#'square_data1.hkl')
-train_sources = os.path.join(DATA_DIR, 'mnist_sources1.hkl')#'my_train_mnist_sources1.hkl')#'6000_mnist_sources1.hkl')#'mnist_sources1.hkl')#''square_sources1.hkl')
-val_file = os.path.join(DATA_DIR, 'mnist_data1.hkl')#'my_valid_mnist_data1.hkl')#'6000_mnist_data1.hkl')#'mnist_data1.hkl')#'square_data1.hkl')
-val_sources = os.path.join(DATA_DIR, 'mnist_sources1.hkl')#'my_valid_mnist_sources1.hkl')#'6000_mnist_sources1.hkl')#'mnist_sources1.hkl')#'square_sources1.hkl')
+train_file = os.path.join(DATA_DIR, 'mnist_tain_6000_data.hkl')
+train_sources = os.path.join(DATA_DIR, 'mnist_tain_6000_sources.hkl')
+val_file = os.path.join(DATA_DIR, 'mnist_valid_2000_data.hkl')
+val_sources = os.path.join(DATA_DIR, 'mnist_valid_2000_sources.hkl')
 
 # Training parameters moving MNIST
 nb_epoch = 1#10
 batch_size = 20
-samples_per_epoch = 200000#52#2000
-N_seq_val = 10  # number of sequences to use for validation
+samples_per_epoch = 6000#52#2000
+N_seq_val = 2000  # number of sequences to use for validation
 
 # Model parameters
 n_channels, im_height, im_width = (1, 64, 64)#change to (1,64,64) in case of moving MNIST
@@ -55,7 +55,6 @@ layer_loss_weights = np.expand_dims(layer_loss_weights, 1)
 nt = 10  # number of timesteps used for sequences in training
 time_loss_weights = 1./ (nt - 1) * np.ones((nt,1))  # equally weight all timesteps except the first
 time_loss_weights[0] = 0
-
 
 pred_rgcLSTM = Pred_rgcLSTM(stack_sizes, R_stack_sizes,
                   A_filt_sizes, Ahat_filt_sizes, R_filt_sizes,

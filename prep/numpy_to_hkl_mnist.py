@@ -32,7 +32,6 @@ def save_as_hickle(istart,iend,dname,fname):
     print( in_video.shape)
     hkl.dump(in_video, dname+fname+'_data.hkl', mode='w')
     # dump names to file
-    import pdb; pdb.set_trace()
     hkl.dump(source_string, dname+fname+'_sources.hkl', mode='w')
 
 save_as_hickle(0,6000,dname,'mnist_tain_6000')
