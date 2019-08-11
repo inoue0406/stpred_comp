@@ -2,9 +2,10 @@
 test/
 data/
 data
-run/log*
-run/result*
-run/old*
+result/log*
+result/result*
+result/case*
+result/old*
 src/log*
 post/log*
 prep/log*

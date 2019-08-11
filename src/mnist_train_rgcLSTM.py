@@ -37,7 +37,7 @@ val_file = os.path.join(DATA_DIR, 'mnist_valid_2000_data.hkl')
 val_sources = os.path.join(DATA_DIR, 'mnist_valid_2000_sources.hkl')
 
 # Training parameters moving MNIST
-nb_epoch = 1#10
+nb_epoch = 10
 batch_size = 20
 samples_per_epoch = 6000#52#2000
 N_seq_val = 2000  # number of sequences to use for validation

@@ -23,17 +23,16 @@ from keras.layers import Input, Dense, Flatten
 from mnist_pred_rgcLSTM import Pred_rgcLSTM
 
 from data_utils import SequenceGenerator
-from kitti_settings import *
-
+from settings_MNIST import *
 
 n_plot = 40
 batch_size = 10
-nt = 5#10
+nt = 10
 
-weights_file = os.path.join(WEIGHTS_DIR, 'reduced_prednet_kitti_weights.hdf5')
-json_file = os.path.join(WEIGHTS_DIR,'reduced_prednet_kitti_model.json')
-test_file = os.path.join(DATA_DIR, 'test_mnist_data1.hkl')#'my_test_mnist_data1.hkl')#'test_mnist_data1.hkl')#'square_data1.hkl')
-test_sources = os.path.join(DATA_DIR,  'test_mnist_sources1.hkl')#'my_test_mnist_sources1.hkl')#'test_mnist_sources1.hkl')#'square_sources1.hkl')
+weights_file = os.path.join(WEIGHTS_DIR, 'case_190811_MNIST_rgcLSTM/pred_rgcLSTM_mnist_weights.hdf5')
+json_file = os.path.join(WEIGHTS_DIR,'case_190811_MNIST_rgcLSTM/pred_rgcLSTM_mnist_model.json')
+test_file = os.path.join(DATA_DIR, 'mnist_test_2000_data.hkl')
+test_sources = os.path.join(DATA_DIR,  'mnist_test_2000_sources.hkl')
 
 # Load trained model
 f = open(json_file, 'r')
@@ -56,6 +55,7 @@ test_model = Model(inputs=inputs, outputs=predictions)
 test_generator = SequenceGenerator(test_file, test_sources, nt, sequence_start_mode='unique', data_format=data_format)
 X_test = test_generator.create_all()
 X_hat = test_model.predict(X_test, batch_size)
+import pdb;pdb.set_trace()
 if data_format == 'channels_first':
     X_test = np.transpose(X_test, (0, 1, 3, 4, 2))
     X_hat = np.transpose(X_hat, (0, 1, 3, 4, 2))
