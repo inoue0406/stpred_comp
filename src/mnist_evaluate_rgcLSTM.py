@@ -55,7 +55,7 @@ test_model = Model(inputs=inputs, outputs=predictions)
 test_generator = SequenceGenerator(test_file, test_sources, nt, sequence_start_mode='unique', data_format=data_format)
 X_test = test_generator.create_all()
 X_hat = test_model.predict(X_test, batch_size)
-import pdb;pdb.set_trace()
+#import pdb;pdb.set_trace()
 if data_format == 'channels_first':
     X_test = np.transpose(X_test, (0, 1, 3, 4, 2))
     X_hat = np.transpose(X_hat, (0, 1, 3, 4, 2))
@@ -84,12 +84,12 @@ plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
 for i in plot_idx:
     for t in range(nt):
         plt.subplot(gs[t])
-        plt.imshow(X_test[i,t], interpolation='none')
+        plt.imshow(X_test[i,t].squeeze(), interpolation='none')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
         if t==0: plt.ylabel('Actual', fontsize=10)
 
         plt.subplot(gs[t + nt])
-        plt.imshow(X_hat[i,t], interpolation='none')
+        plt.imshow(X_hat[i,t].squeeze(), interpolation='none')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
         if t==0: plt.ylabel('Predicted', fontsize=10)
 
