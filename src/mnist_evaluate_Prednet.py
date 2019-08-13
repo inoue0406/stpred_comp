@@ -1,5 +1,5 @@
 '''
-Evaluate trained PredNet on KITTI sequences.
+Evaluate trained PredNet on Moving MNIST sequences.
 Calculates mean-squared error and plots predictions.
 '''
 
@@ -17,17 +17,16 @@ from keras.layers import Input, Dense, Flatten
 
 from prednet import PredNet
 from data_utils import SequenceGenerator
-from kitti_settings import *
-
+from settings_MNIST import *
 
 n_plot = 40
 batch_size = 10
 nt = 10
 
-weights_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_weights.hdf5')
-json_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_model.json')
-test_file = os.path.join(DATA_DIR, 'X_test.hkl')
-test_sources = os.path.join(DATA_DIR, 'sources_test.hkl')
+weights_file = os.path.join(WEIGHTS_DIR, 'prednet_mnist_weights.hdf5')
+json_file = os.path.join(WEIGHTS_DIR, 'prednet_mnist_model.json')
+test_file = os.path.join(DATA_DIR, 'mnist_test_2000_data.hkl')
+test_sources = os.path.join(DATA_DIR,  'mnist_test_2000_sources.hkl')
 
 # Load trained model
 f = open(json_file, 'r')
@@ -74,12 +73,12 @@ plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
 for i in plot_idx:
     for t in range(nt):
         plt.subplot(gs[t])
-        plt.imshow(X_test[i,t], interpolation='none')
+        plt.imshow(X_test[i,t].squeeze(), interpolation='none')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
         if t==0: plt.ylabel('Actual', fontsize=10)
 
         plt.subplot(gs[t + nt])
-        plt.imshow(X_hat[i,t], interpolation='none')
+        plt.imshow(X_hat[i,t].squeeze(), interpolation='none')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
         if t==0: plt.ylabel('Predicted', fontsize=10)
 

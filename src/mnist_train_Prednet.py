@@ -20,7 +20,8 @@ from data_utils import SequenceGenerator
 from settings_MNIST import *
 
 save_model = True  # if weights will be saved
-json_file = os.path.join(WEIGHTS_DIR, 'pred_rgcLSTM_mnist_model.json')
+weights_file = os.path.join(WEIGHTS_DIR, 'prednet_mnist_weights.hdf5')
+json_file = os.path.join(WEIGHTS_DIR, 'prednet_mnist_model.json')
 
 # Data files
 train_file = os.path.join(DATA_DIR, 'mnist_tain_6000_data.hkl')
