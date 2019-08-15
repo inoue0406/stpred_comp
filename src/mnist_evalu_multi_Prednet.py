@@ -1,4 +1,4 @@
-'''
+'''11;rgb:0000/0000/0000
 Evaluate trained PredNet on Moving MNIST sequences.
 multi-step forecast
 '''
@@ -24,9 +24,10 @@ from settings_MNIST import *
 n_plot = 40
 batch_size = 10
 nt = 20
-extrap_start_time = 10  # starting at this time step, the prediction from the previous time step will be treated as the actual input
+extrap_start_time = 15 # starting at this time step, the prediction from the previous time step will be treated as the actual input
 
-case = 'case_190812_MNIST_Prednet'
+#case = 'case_190812_MNIST_Prednet'
+case = 'case_190813_MNIST_Prednet_nt20'
 
 weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_mnist_weights.hdf5')
 json_file = os.path.join(WEIGHTS_DIR, case, 'prednet_mnist_model.json')
@@ -58,39 +59,39 @@ X_hat = test_model.predict(X_test, batch_size)
 if data_format == 'channels_first':
     X_test = np.transpose(X_test, (0, 1, 3, 4, 2))
     X_hat = np.transpose(X_hat, (0, 1, 3, 4, 2))
-import pdb;pdb.set_trace()
+#import pdb;pdb.set_trace()
     
 # Compare MSE of PredNet predictions vs. using last frame.  Write results to prediction_scores.txt
 if not os.path.exists(RESULTS_SAVE_DIR): os.mkdir(RESULTS_SAVE_DIR)
-f = open(RESULTS_SAVE_DIR + case + 'prediction_scores.txt', 'w')
+f = open(os.path.join(RESULTS_SAVE_DIR, case, 'prediction_scores.txt'), 'w')
 # loop through evary time for estimation/prediction
 f.write("time, MSE, MAE, SSIM\n")
 for i in range(X_test.shape[1]):
     mse = np.mean( (X_test[:,i,:,:,:] - X_hat[:,i,:,:,:])**2 )  # MSE for time i
     mae = np.mean( np.abs(X_test[:,i,:,:,:] - X_hat[:,i,:,:,:]) )  # MAE for time i
     ssim= evaluu.compare_ssim(X_test[:,i,:,:,:],X_hat[:,i,:,:,:],win_size=3,multichannel=True)
-    f.write("%f,%f,%f,%f\n" % i,mse,mae,ssim)
+    f.write("%f,%f,%f,%f\n" % (i,mse,mae,ssim))
 f.close()
 
-## Plot some predictions
-#aspect_ratio = float(X_hat.shape[2]) / X_hat.shape[3]
-#plt.figure(figsize = (nt, 2*aspect_ratio))
-#gs = gridspec.GridSpec(2, nt)
-#gs.update(wspace=0., hspace=0.)
-#plot_save_dir = os.path.join(RESULTS_SAVE_DIR, 'prediction_plots/')
-#if not os.path.exists(plot_save_dir): os.mkdir(plot_save_dir)
-#plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
-#for i in plot_idx:
-#    for t in range(nt):
-#        plt.subplot(gs[t])
-#        plt.imshow(X_test[i,t].squeeze(), interpolation='none')
-#        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
-#        if t==0: plt.ylabel('Actual', fontsize=10)
-#
-#        plt.subplot(gs[t + nt])
-#        plt.imshow(X_hat[i,t].squeeze(), interpolation='none')
-#        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
-#        if t==0: plt.ylabel('Predicted', fontsize=10)
-#
-#    plt.savefig(plot_save_dir +  'plot_' + str(i) + '.png')
-#    plt.clf()
+# Plot some predictions
+aspect_ratio = float(X_hat.shape[2]) / X_hat.shape[3]
+plt.figure(figsize = (nt, 2*aspect_ratio))
+gs = gridspec.GridSpec(2, nt)
+gs.update(wspace=0., hspace=0.)
+plot_save_dir = os.path.join(RESULTS_SAVE_DIR, case, 'prediction_plots/')
+if not os.path.exists(plot_save_dir): os.mkdir(plot_save_dir)
+plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
+for i in plot_idx:
+    for t in range(nt):
+        plt.subplot(gs[t])
+        plt.imshow(X_test[i,t].squeeze(), interpolation='none')
+        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
+        if t==0: plt.ylabel('Actual', fontsize=10)
+
+        plt.subplot(gs[t + nt])
+        plt.imshow(X_hat[i,t].squeeze(), interpolation='none')
+        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
+        if t==0: plt.ylabel('Predicted', fontsize=10)
+
+    plt.savefig(plot_save_dir +  'plot_' + str(i) + '.png')
+    plt.clf()

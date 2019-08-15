@@ -19,9 +19,13 @@ from prednet import PredNet
 from data_utils import SequenceGenerator
 from settings_MNIST import *
 
+case = 'case_190814_MNIST_Prednet_nt20'
+
 save_model = True  # if weights will be saved
-weights_file = os.path.join(WEIGHTS_DIR, 'prednet_mnist_weights.hdf5')
-json_file = os.path.join(WEIGHTS_DIR, 'prednet_mnist_model.json')
+result_dir = os.path.join(WEIGHTS_DIR, case)
+weights_file = os.path.join(result_dir, 'prednet_mnist_weights.hdf5')
+json_file = os.path.join(result_dir, 'prednet_mnist_model.json')
+print('result dir path:',result_dir,'\n')
 
 # Data files
 train_file = os.path.join(DATA_DIR, 'mnist_tain_6000_data.hkl')
@@ -30,7 +34,7 @@ val_file = os.path.join(DATA_DIR, 'mnist_valid_2000_data.hkl')
 val_sources = os.path.join(DATA_DIR, 'mnist_valid_2000_sources.hkl')
 
 # Training parameters
-nb_epoch = 10
+nb_epoch = 20
 batch_size = 20
 samples_per_epoch = 6000
 N_seq_val = 2000  # number of sequences to use for validation
@@ -45,7 +49,8 @@ Ahat_filt_sizes = (3, 3, 3, 3)
 R_filt_sizes = (3, 3, 3, 3)
 layer_loss_weights = np.array([1., 0., 0., 0.])  # weighting for each layer in final loss; "L_0" model:  [1, 0, 0, 0], "L_all": [1, 0.1, 0.1, 0.1]
 layer_loss_weights = np.expand_dims(layer_loss_weights, 1)
-nt = 10  # number of timesteps used for sequences in training
+#nt = 10  # number of timesteps used for sequences in training
+nt = 20  # number of timesteps used for sequences in training
 time_loss_weights = 1./ (nt - 1) * np.ones((nt,1))  # equally weight all timesteps except the first
 time_loss_weights[0] = 0
 
@@ -67,7 +72,7 @@ val_generator = SequenceGenerator(val_file, val_sources, nt, batch_size=batch_si
 lr_schedule = lambda epoch: 0.001 if epoch < 75 else 0.0001    # start with lr of 0.001 and then drop to 0.0001 after 75 epochs
 callbacks = [LearningRateScheduler(lr_schedule)]
 if save_model:
-    if not os.path.exists(WEIGHTS_DIR): os.mkdir(WEIGHTS_DIR)
+    if not os.path.exists(result_dir): os.mkdir(result_dir)
     callbacks.append(ModelCheckpoint(filepath=weights_file, monitor='val_loss', save_best_only=True))
 
 history = model.fit_generator(train_generator, samples_per_epoch / batch_size, nb_epoch, callbacks=callbacks,
