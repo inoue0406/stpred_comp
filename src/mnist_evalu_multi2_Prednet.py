@@ -20,6 +20,7 @@ from skimage import measure as evaluu
 from prednet import PredNet
 from data_utils import SequenceGenerator
 from settings_MNIST import *
+from plot_comp_mnist import * 
 
 n_plot = 40
 batch_size = 10
@@ -56,6 +57,10 @@ test_generator = SequenceGenerator(test_file, test_sources, nt, sequence_start_m
 
 # first, load the whole data
 X_test = test_generator.create_all()
+# if you want to test with smaller dataset
+X_test = X_test[0:100,:,:,:,:]
+
+#import pdb;pdb.set_trace()
 #X_hat = test_model.predict(X_test, batch_size)
     
 # loop through 1-step prediction to get multi-step preictions
@@ -72,7 +77,6 @@ for n in range(ntpred):
     X_hat[:,n2,:,:,:] = X_h1[:,ntpred-1,:,:,:]
     # use the prediction as the next input
     X_tmp[:,n2,:,:,:] = X_h1[:,ntpred-1,:,:,:]
-#import pdb;pdb.set_trace()
 
 if data_format == 'channels_first':
     X_test = np.transpose(X_test, (0, 1, 3, 4, 2))
@@ -91,24 +95,29 @@ for i in range(X_test.shape[1]):
 f.close()
 
 # Plot some predictions
-aspect_ratio = float(X_hat.shape[2]) / X_hat.shape[3]
-plt.figure(figsize = (nt, 2*aspect_ratio))
-gs = gridspec.GridSpec(2, nt)
-gs.update(wspace=0., hspace=0.)
+#aspect_ratio = float(X_hat.shape[2]) / X_hat.shape[3]
+#plt.figure(figsize = (nt, 2*aspect_ratio))
+#gs = gridspec.GridSpec(2, nt)
+#gs.update(wspace=0., hspace=0.)
+
 plot_save_dir = os.path.join(RESULTS_SAVE_DIR, case, 'prediction_plots/')
-if not os.path.exists(plot_save_dir): os.mkdir(plot_save_dir)
-plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
-for i in plot_idx:
-    for t in range(nt):
-        plt.subplot(gs[t])
-        plt.imshow(X_test[i,t].squeeze(), interpolation='none')
-        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
-        if t==0: plt.ylabel('Actual', fontsize=10)
+npics = 10
+plot_comp_prediction(X_test,X_hat,nt,nt_1stp,npics,plot_save_dir,case,mode='png_whole')
+plot_comp_prediction(X_test,X_hat,nt,nt_1stp,npics,plot_save_dir,case,mode='png_ind')
 
-        plt.subplot(gs[t + nt])
-        plt.imshow(X_hat[i,t].squeeze(), interpolation='none')
-        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
-        if t==0: plt.ylabel('Predicted', fontsize=10)
-
-    plt.savefig(plot_save_dir +  'plot_' + str(i) + '.png')
-    plt.clf()
+#if not os.path.exists(plot_save_dir): os.mkdir(plot_save_dir)
+#plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
+#for i in plot_idx:
+#    for t in range(nt):
+#        plt.subplot(gs[t])
+#        plt.imshow(X_test[i,t].squeeze(), interpolation='none')
+#        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
+#        if t==0: plt.ylabel('Actual', fontsize=10)
+#
+#        plt.subplot(gs[t + nt])
+#        plt.imshow(X_hat[i,t].squeeze(), interpolation='none')
+#        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
+#        if t==0: plt.ylabel('Predicted', fontsize=10)
+#
+#    plt.savefig(plot_save_dir +  'plot_' + str(i) + '.png')
+#    plt.clf()
