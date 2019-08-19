@@ -58,13 +58,13 @@ test_generator = SequenceGenerator(test_file, test_sources, nt, sequence_start_m
 # first, load the whole data
 X_test = test_generator.create_all()
 # if you want to test with smaller dataset
-X_test = X_test[0:100,:,:,:,:]
+#X_test = X_test[0:100,:,:,:,:]
 
 #import pdb;pdb.set_trace()
 #X_hat = test_model.predict(X_test, batch_size)
     
 # loop through 1-step prediction to get multi-step preictions
-X_hat = np.zeros(X_test.shape)
+X_hat = np.zeros(X_test.shape,dtype=np.float32)
 X_tmp = X_test.copy()
 ntpred = nt-nt_1stp
 for n in range(ntpred):
@@ -90,7 +90,11 @@ f.write("time, MSE, MAE, SSIM\n")
 for i in range(X_test.shape[1]):
     mse = np.mean( (X_test[:,i,:,:,:] - X_hat[:,i,:,:,:])**2 )  # MSE for time i
     mae = np.mean( np.abs(X_test[:,i,:,:,:] - X_hat[:,i,:,:,:]) )  # MAE for time i
-    ssim= evaluu.compare_ssim(X_test[:,i,:,:,:],X_hat[:,i,:,:,:],win_size=3,multichannel=True)
+    ssim = 0.0
+    for k in range(X_test.shape[0]):
+        ssim += evaluu.compare_ssim(X_test[k,i,:,:,0],X_hat[k,i,:,:,0])
+    ssim = ssim / X_test.shape[0]
+    #ssim= evaluu.compare_ssim(X_test[:,i,:,:,:],X_hat[:,i,:,:,:],win_size=3,multichannel=True)
     f.write("%f,%f,%f,%f\n" % (i,mse,mae,ssim))
 f.close()
 
