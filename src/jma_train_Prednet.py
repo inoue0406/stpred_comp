@@ -19,7 +19,7 @@ from prednet import PredNet
 from data_utils import SequenceGenerator
 from settings_jma import *
 
-case = 'case_190820_jma_Prednet_nt20'
+case = 'case_190825_jma_Prednet_nt80'
 
 save_model = True  # if weights will be saved
 result_dir = os.path.join(WEIGHTS_DIR, case)
@@ -34,7 +34,7 @@ val_file = os.path.join(DATA_DIR, 'jma_test_2017_data.hkl')
 val_sources = os.path.join(DATA_DIR, 'jma_test_2017_sources.hkl')
 
 # Training parameters
-nb_epoch = 10
+nb_epoch = 80
 batch_size = 5
 samples_per_epoch = 3000
 N_seq_val = 3000  # number of sequences to use for validation
