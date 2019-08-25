@@ -19,7 +19,8 @@ def save_as_hickle(dname,pattern,case):
     #print(list)
     nt = 12 # time steps per data (1h)
     X_sources = np.zeros(len(flist)*nt)
-    X_all = np.zeros((len(flist)*nt,200,200,1))
+    X_all = np.zeros((len(flist)*nt,200,200,1),dtype=np.float16)
+    print('data size :%d Gbytes' % (X_all.size * X_all.itemsize/1.0e9))
 
     for i,fname in enumerate(flist):
         print('reading:',i,fname)
@@ -39,7 +40,7 @@ def save_as_hickle(dname,pattern,case):
 
 dname = '../data/jma/'
 # 2015 and 2016 data for training 
-#save_as_hickle(dname,'../data/jma/data_kanto/2p-jmaradar5_201[56]*h5','jma_train_2015-2016')
-save_as_hickle(dname,'../data/jma/data_kanto/2p-jmaradar5_2015*h5','jma_train_2015')
+save_as_hickle(dname,'../data/jma/data_kanto/2p-jmaradar5_201[56]*h5','jma_train_2015-2016')
+#save_as_hickle(dname,'../data/jma/data_kanto/2p-jmaradar5_2015*h5','jma_train_2015')
 # 2017 data to test
 save_as_hickle(dname,'../data/jma/data_kanto/2p-jmaradar5_2017*h5','jma_test_2017')

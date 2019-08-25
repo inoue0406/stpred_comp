@@ -1,5 +1,5 @@
 # Where data will be stored
-DATA_DIR = '../data/data/'
+DATA_DIR = '../data/jma/'
 
 # Where model weights and config will be saved if you run *_train.py
 WEIGHTS_DIR = '../result/'

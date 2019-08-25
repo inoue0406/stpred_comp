@@ -28,8 +28,8 @@ json_file = os.path.join(result_dir, 'prednet_mnist_model.json')
 print('result dir path:',result_dir,'\n')
 
 # Data files
-train_file = os.path.join(DATA_DIR, 'mnist_tain_6000_data.hkl')
-train_sources = os.path.join(DATA_DIR, 'mnist_tain_6000_sources.hkl')
+train_file = os.path.join(DATA_DIR, 'mnist_train_6000_data.hkl')
+train_sources = os.path.join(DATA_DIR, 'mnist_train_6000_sources.hkl')
 val_file = os.path.join(DATA_DIR, 'mnist_valid_2000_data.hkl')
 val_sources = os.path.join(DATA_DIR, 'mnist_valid_2000_sources.hkl')
 
