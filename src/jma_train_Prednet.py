@@ -28,13 +28,13 @@ json_file = os.path.join(result_dir, 'prednet_jma_model.json')
 print('result dir path:',result_dir,'\n')
 
 # Data files
-train_file = os.path.join(DATA_DIR, 'jma_train_2015_data.hkl')
-train_sources = os.path.join(DATA_DIR, 'jma_train_2015_sources.hkl')
-val_file = os.path.join(DATA_DIR, 'jma_train_2015_data.hkl')
-val_sources = os.path.join(DATA_DIR, 'jma_train_2015_sources.hkl')
+train_file = os.path.join(DATA_DIR, 'jma_train_2015-2016_data.hkl')
+train_sources = os.path.join(DATA_DIR, 'jma_train_2015-2016_sources.hkl')
+val_file = os.path.join(DATA_DIR, 'jma_test_2017_data.hkl')
+val_sources = os.path.join(DATA_DIR, 'jma_test_2017_sources.hkl')
 
 # Training parameters
-nb_epoch = 20
+nb_epoch = 10
 batch_size = 5
 samples_per_epoch = 3000
 N_seq_val = 3000  # number of sequences to use for validation
