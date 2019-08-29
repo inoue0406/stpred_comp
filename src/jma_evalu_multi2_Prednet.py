@@ -28,7 +28,7 @@ batch_size = 5
 nt = 12
 nt_1stp = 6 #time dimension for one-step prediction
 
-case = 'case_190820_jma_Prednet_nt20'
+case = 'case_190825_jma_Prednet_nt80'
 
 weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_weights.hdf5')
 json_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_model.json')
@@ -55,13 +55,6 @@ test_model = Model(inputs=inputs, outputs=predictions)
 
 test_generator = SequenceGenerator(test_file, test_sources, nt, sequence_start_mode='unique', data_format=data_format, batch_size=batch_size)
 
-# first, load the whole data
-#X_test = test_generator.create_all()
-# if you want to test with smaller dataset
-X_test = X_test[0:100,:,:,:,:]
-
-#import pdb;pdb.set_trace()
-
 def predict_multistep(nt,nt_1stp,X_test,test_model):
     '''
     Multi-step prediction using PredNet model
@@ -73,7 +66,7 @@ def predict_multistep(nt,nt_1stp,X_test,test_model):
     for n in range(ntpred):
         n1 = n
         n2 = nt_1stp + n
-        print('prediction with steps from ',n1,' to ',n2,' \n')
+        #print('prediction with steps from ',n1,' to ',n2,' \n')
         X_t1 = X_tmp[:,n1:n2,:,:,:]
         X_h1 = test_model.predict(X_t1, batch_size)
         # prediction for 1step
@@ -97,11 +90,17 @@ MaxSE_all = np.empty((0,nt),float)
 FSS_t_all = np.empty((0,nt),float)
 
 threshold = 0.5
-# loop through  steps
+scale_factor = 201.0
+# loop through data loader steps
 for i in range(len(test_generator)):
     # use only "x"
     X_test,_ = test_generator[i]
     X_hat = predict_multistep(nt,nt_1stp,X_test,test_model)
+
+    # convert to 0-201(mm/h) range
+    X_test = X_test * scale_factor
+    X_hat = X_hat * scale_factor
+    print(" batch:",i,", max value:",np.max(X_test))
     
     if data_format == 'channels_first':
         X_test = np.transpose(X_test, (0, 1, 3, 4, 2))
@@ -110,7 +109,7 @@ for i in range(len(test_generator)):
     # apply various evaluation metric
     SumSE,hit,miss,falarm,m_xy,m_xx,m_yy,MaxSE = StatRainfall(X_test,X_hat,
                                                               th=threshold)
-    FSS_t = FSS_for_tensor(Xtrue,Xmodel,th=threshold,win=10)
+    FSS_t = FSS_for_tensor(X_test,X_hat,th=threshold,win=10)
         
     SumSE_all = np.append(SumSE_all,SumSE,axis=0)
     hit_all = np.append(hit_all,hit,axis=0)
@@ -127,7 +126,7 @@ RMSE,CSI,FAR,POD,Cor,MaxMSE,FSS_mean = MetricRainfall(SumSE_all,hit_all,miss_all
                                                       m_xy_all,m_xx_all,m_yy_all,
                                                       MaxSE_all,FSS_t_all,axis=(0))
 # save evaluated metric as csv file
-tpred = (np.arange(opt.tdim_use)+1.0)*5.0 # in minutes
+tpred = (np.arange(nt)+1.0)*5.0 # in minutes
 df = pd.DataFrame({'tpred_min':tpred,
                    'RMSE':RMSE,
                    'CSI':CSI,
