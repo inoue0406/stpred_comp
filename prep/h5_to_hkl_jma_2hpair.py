@@ -10,6 +10,8 @@ import hickle as hkl
 import h5py
 import pandas as pd
 
+img_size = 128
+
 def save_as_hickle(dname,data_dir,csv_file,case):
     print('save_as_hickle',dname,data_dir,csv_file,case)
     
@@ -17,7 +19,7 @@ def save_as_hickle(dname,data_dir,csv_file,case):
     #print(list)
     nt = 24 # time steps per data (1h)
     X_sources = np.zeros(len(df_fnames)*nt)
-    X_all = np.zeros((len(df_fnames)*nt,200,200,1),dtype=np.float16)
+    X_all = np.zeros((len(df_fnames)*nt,img_size,img_size,1),dtype=np.float16)
     print('data size :%d Gbytes' % (X_all.size * X_all.itemsize/1.0e9))
 
     for i in range(len(df_fnames)):
@@ -49,11 +51,12 @@ def save_as_hickle(dname,data_dir,csv_file,case):
     hkl.dump(X_sources, dname+case+'_sources.hkl', mode='w')
 
 dname = '../data/jma/'
-data_dir = 'data_kanto'
+data_dir = 'data_kanto_resize'
 # 2015 and 2016 data for training
 tr_csv = '../data/jma/train_simple_JMARadar.csv'
-save_as_hickle(dname,data_dir,tr_csv,'jma_2hr_train_2015-2016')
-#save_as_hickle(dname,'../data/jma/data_kanto/2p-jmaradar5_2015*h5','jma_train_2015')
+save_as_hickle(dname,data_dir,tr_csv,'jma_2hr_128_train_2015-2016')
+#tr_csv = '../data/jma/train_kanto_flatsampled_JMARadar.csv'
+#save_as_hickle(dname,data_dir,tr_csv,'jma_2hr_train_flatsampled')
 # 2017 data to test
 va_csv = '../data/jma/valid_simple_JMARadar.csv'
-save_as_hickle(dname,data_dir,va_csv,'jma_2hr_test_2017')
+save_as_hickle(dname,data_dir,va_csv,'jma_2hr_128_test_2017')

@@ -15,11 +15,20 @@ from keras.layers import TimeDistributed
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
 from keras.optimizers import Adam
 
+# A config to allow GPU memory check by nvidia-smi
+if 'tensorflow' == K.backend():
+    import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+set_session(tf.Session(config=config))
+
 from prednet import PredNet
 from data_utils import SequenceGenerator
 from settings_MNIST import *
 
-case = 'case_190814_MNIST_Prednet_nt20'
+#case = 'case_190814_MNIST_Prednet_nt20'
+case = 'case_190831_test_MNIST_Prednet_nt20'
 
 save_model = True  # if weights will be saved
 result_dir = os.path.join(WEIGHTS_DIR, case)
@@ -43,6 +52,8 @@ N_seq_val = 2000  # number of sequences to use for validation
 n_channels, im_height, im_width = (1, 64, 64)
 input_shape = (n_channels, im_height, im_width) if K.image_data_format() == 'channels_first' else (im_height, im_width, n_channels)
 stack_sizes = (n_channels, 48, 96, 192)
+#stack_sizes = (n_channels, 24, 48, 96) #smaller stack size
+#stack_sizes = (n_channels, 12, 24, 24) #smaller stack size
 R_stack_sizes = stack_sizes
 A_filt_sizes = (3, 3, 3)
 Ahat_filt_sizes = (3, 3, 3, 3)

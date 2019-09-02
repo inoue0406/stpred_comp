@@ -1,5 +1,5 @@
 '''
-Train PredNet on KITTI sequences. (Geiger et al. 2013, http://www.cvlibs.net/datasets/kitti/)
+Train PredNet on JMA radar data
 '''
 
 import os
@@ -15,11 +15,20 @@ from keras.layers import TimeDistributed
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
 from keras.optimizers import Adam
 
+# A config to allow GPU memory check by nvidia-smi
+if 'tensorflow' == K.backend():
+    import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+set_session(tf.Session(config=config))
+
 from prednet import PredNet
 from data_utils import SequenceGenerator
 from settings_jma import *
 
-case = 'case_190825_jma_Prednet_nt80'
+#case = 'case_190825_jma_Prednet_nt80'
+case = 'case_190901_jma_Prednet_128_nt80'
 
 save_model = True  # if weights will be saved
 result_dir = os.path.join(WEIGHTS_DIR, case)
@@ -28,10 +37,14 @@ json_file = os.path.join(result_dir, 'prednet_jma_model.json')
 print('result dir path:',result_dir,'\n')
 
 # Data files
-train_file = os.path.join(DATA_DIR, 'jma_train_2015-2016_data.hkl')
-train_sources = os.path.join(DATA_DIR, 'jma_train_2015-2016_sources.hkl')
-val_file = os.path.join(DATA_DIR, 'jma_test_2017_data.hkl')
-val_sources = os.path.join(DATA_DIR, 'jma_test_2017_sources.hkl')
+#train_file = os.path.join(DATA_DIR, 'jma_train_2015-2016_data.hkl')
+#train_sources = os.path.join(DATA_DIR, 'jma_train_2015-2016_sources.hkl')
+#val_file = os.path.join(DATA_DIR, 'jma_test_2017_data.hkl')
+#val_sources = os.path.join(DATA_DIR, 'jma_test_2017_sources.hkl')
+train_file = os.path.join(DATA_DIR, 'jma_2hr_128_train_2015-2016_data.hkl')
+train_sources = os.path.join(DATA_DIR, 'jma_2hr_128_train_2015-2016_sources.hkl')
+val_file = os.path.join(DATA_DIR, 'jma_2hr_128_test_2017_data.hkl')
+val_sources = os.path.join(DATA_DIR, 'jma_2hr_128_test_2017_sources.hkl')
 
 # Training parameters
 nb_epoch = 80
@@ -40,7 +53,7 @@ samples_per_epoch = 3000
 N_seq_val = 3000  # number of sequences to use for validation
 
 # Model parameters
-n_channels, im_height, im_width = (1, 200, 200)
+n_channels, im_height, im_width = (1, 128, 128)
 input_shape = (n_channels, im_height, im_width) if K.image_data_format() == 'channels_first' else (im_height, im_width, n_channels)
 stack_sizes = (n_channels, 48, 96, 192)
 R_stack_sizes = stack_sizes
@@ -49,7 +62,8 @@ Ahat_filt_sizes = (3, 3, 3, 3)
 R_filt_sizes = (3, 3, 3, 3)
 layer_loss_weights = np.array([1., 0., 0., 0.])  # weighting for each layer in final loss; "L_0" model:  [1, 0, 0, 0], "L_all": [1, 0.1, 0.1, 0.1]
 layer_loss_weights = np.expand_dims(layer_loss_weights, 1)
-nt = 12  # number of timesteps used for sequences in training
+#nt = 12  # number of timesteps used for sequences in training
+nt = 24  # number of timesteps used for sequences in training
 time_loss_weights = 1./ (nt - 1) * np.ones((nt,1))  # equally weight all timesteps except the first
 time_loss_weights[0] = 0
 
@@ -64,6 +78,9 @@ errors_by_time = Flatten()(errors_by_time)  # will be (batch_size, nt)
 final_errors = Dense(1, weights=[time_loss_weights, np.zeros(1)], trainable=False)(errors_by_time)  # weight errors by time
 model = Model(inputs=inputs, outputs=final_errors)
 model.compile(loss='mean_absolute_error', optimizer='adam')
+
+# print model summary 
+model.summary()
 
 train_generator = SequenceGenerator(train_file, train_sources, nt, batch_size=batch_size, shuffle=True)
 val_generator = SequenceGenerator(val_file, val_sources, nt, batch_size=batch_size, N_seq=N_seq_val)

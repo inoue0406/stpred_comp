@@ -48,7 +48,7 @@ class SequenceGenerator(Iterator):
 
     def next(self):
         with self.lock:
-            current_index = (self.batch_index * self.batch_size) % self.n
+            current_index = (self.batch_index * self.batch_size) % self.nt
             index_array, current_batch_size = next(self.index_generator), self.batch_size
         batch_x = np.zeros((current_batch_size, self.nt) + self.im_shape, np.float32)
         for i, idx in enumerate(index_array):
