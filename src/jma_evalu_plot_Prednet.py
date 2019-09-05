@@ -34,10 +34,12 @@ nt_1stp = 12 #time dimension for one-step prediction
 scale_factor = 201.0
 
 #case = 'case_190825_jma_Prednet_nt80'
-case = 'case_190901_jma_Prednet_128_nt80'
+#case = 'case_190901_jma_Prednet_128_nt80'
+case = 'case_190903_jma_Prednet-ft_128_nt80'
 
-weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_weights.hdf5')
-json_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_model.json')
+#weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_weights.hdf5')
+weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_weights-finetuned.hdf5')
+json_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_model-finetuned.json')
 
 #test_file = os.path.join(DATA_DIR, 'jma_test_2017_data.hkl')
 #test_sources = os.path.join(DATA_DIR, 'jma_test_2017_sources.hkl')

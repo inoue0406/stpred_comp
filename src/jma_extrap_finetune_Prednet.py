@@ -35,6 +35,7 @@ def extrap_loss(y_true, y_hat):
 
 #case = 'case_190825_jma_Prednet_nt80'
 case = 'case_190901_jma_Prednet_128_nt80'
+#case = 'case_190904_jma_Prednet_128_lrhigh'
 
 nt = 24
 extrap_start_time = 12  # starting at this time step, the prediction from the previous time step will be treated as the actual input
@@ -84,7 +85,8 @@ model.compile(loss=extrap_loss, optimizer='adam')
 train_generator = SequenceGenerator(train_file, train_sources, nt, batch_size=batch_size, shuffle=True, output_mode='prediction')
 val_generator = SequenceGenerator(val_file, val_sources, nt, batch_size=batch_size, N_seq=N_seq_val, output_mode='prediction')
 
-lr_schedule = lambda epoch: 0.001 if epoch < 75 else 0.0001    # start with lr of 0.001 and then drop to 0.0001 after 75 epochs
+#lr_schedule = lambda epoch: 0.001 if epoch < 75 else 0.0001    # start with lr of 0.001 and then drop to 0.0001 after 75 epochs
+lr_schedule = lambda epoch: 0.005 if epoch < 75 else 0.0005    # start with lr of 0.001 and then drop to 0.0001 after 75 epochs
 callbacks = [LearningRateScheduler(lr_schedule)]
 if save_model:
     if not os.path.exists(WEIGHTS_DIR): os.mkdir(WEIGHTS_DIR)
