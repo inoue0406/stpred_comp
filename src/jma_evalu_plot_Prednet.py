@@ -35,7 +35,8 @@ scale_factor = 201.0
 
 #case = 'case_190825_jma_Prednet_nt80'
 #case = 'case_190901_jma_Prednet_128_nt80'
-case = 'case_190903_jma_Prednet-ft_128_nt80'
+#case = 'case_190903_jma_Prednet-ft_128_nt80'
+case = 'case_190905_jma_Prednet-ft_128_lrlarge'
 
 #weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_weights.hdf5')
 weights_file = os.path.join(WEIGHTS_DIR, case, 'prednet_jma_weights-finetuned.hdf5')

@@ -6,6 +6,7 @@ result/log*
 result/result*
 result/case*
 result/old*
+result/*
 src/log*
 post/log*
 prep/log*
